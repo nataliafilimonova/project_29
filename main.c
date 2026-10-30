@@ -1,41 +1,39 @@
 #include <stdio.h>
 #include <math.h>
 
-#define K 2
-#define L 1.0
-
-int check(float data[], int n, char name[]) {
-    float q[10] = {0};
-    int status = 0;
+int check(float x[], int n, char name[]) {
+    float q[5]; 
+    int warn = 0;
     
-    for (int i = K; i < n; i++) {
-        float curr = data[i];
-        float prev = data[i-K];
-        if (prev != 0) {
-            float diff = (curr - prev) / prev;
+    for (int i = 2; i < n; i++) {
+        if (x[i-2] != 0) { 
+            float diff = (x[i] - x[i-2]) / x[i-2];
             q[i] = diff * diff;
+        } else {
+            q[i] = 0;
+        }
+        printf("%s: X[%d]=%.1f, X[%d]=%.1f -> Q = %.6f\n", name, i+1, x[i], i-1, x[i-2], q[i]);
+    }
+    
+    for (int i = 3; i < n; i++) {
+        if (q[i] > 1.0 && q[i-1] > 1.0) {
+            warn = 1;
         }
     }
     
-    for (int i = K + 1; i < n; i++) {
-        if (q[i] > L && q[i-1] > L) {
-            status = 1;
-        }
-    }
-    
-    printf("Компонент %s: ", name);
-    if (status) {
-        printf("ПРЕДУПРЕЖДЕНИЕ\n");
+    if (warn == 1) {
+        printf("Состояние: ПРЕДУПРЕЖДЕНИЕ\n");
     } else {
-        printf("НОРМА\n");
+        printf("Состояние: НОРМА\n");
     }
-    return status;
+    
+    return warn;
 }
 
 int main() {
-    float app[] = {53.8, 57.2, 55.2, 53.2, 51.2};
-    float ssd[] = {43.7, 44.2, 44.7, 50.6, 51.1};
-    float log[] = {32.0, 33.6, 30.6, 35.2, 34.5};
+    float app[5] = {53.8, 57.2, 55.2, 53.2, 51.2};
+    float ssd[5] = {43.7, 44.2, 44.7, 50.6, 51.1};
+    float log[5] = {32.0, 33.6, 30.6, 35.2, 34.5};
 
     printf("--- Анализ состояний ---\n");
     
@@ -45,7 +43,7 @@ int main() {
 
     printf("\n--- Проверка инцидента ---\n");
     
-    if ((a && b) || (a && c) || (b && c)) {
+    if ((a == 1 && b == 1) || (a == 1 && c == 1) || (b == 1 && c == 1)) {
         printf("Инцидент зафиксирован!\n");
     } else {
         printf("Инцидентов не обнаружено. Все системы в норме.\n");
