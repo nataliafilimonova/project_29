@@ -21,17 +21,31 @@ int analyze_comp(char name[]) {
     float q_prev = 0;
     int warn = 0;
 
-    printf("\nВведите 5 значений для %s (через пробел или Enter):\n", name);
+    printf("\n========================================\n");
+    printf("Компонент: %s\n", name);
+    printf("Введите 5 значений (через пробел или Enter):\n");
     
     for (int i = 0; i < 5; i++) {
-        scanf("%f", &val);
+        if (scanf("%f", &val) != 1) {
+            printf("Ошибка: введено не число!\n");
+            while (getchar() != '\n'); 
+            i--; 
+            continue;
+        }
         
         if (i >= 2) {
             float q = calc_q(val, x1);
+            printf("  X[%d]=%.1f, X[%d]=%.1f -> Q = %.6f", i+1, val, i-1, x1, q);
+            
             if (i >= 3) {
                 if (check_rule(q, q_prev)) {
                     warn = 1;
+                    printf(" | ПРЕДУПРЕЖДЕНИЕ\n");
+                } else {
+                    printf(" | НОРМА\n");
                 }
+            } else {
+                printf("\n");
             }
             q_prev = q;
         }
@@ -40,9 +54,9 @@ int analyze_comp(char name[]) {
     }
     
     if (warn == 1) {
-        printf("Состояние %s: ПРЕДУПРЕЖДЕНИЕ\n", name);
+        printf("-> Итог %s: ПРЕДУПРЕЖДЕНИЕ\n", name);
     } else {
-        printf("Состояние %s: НОРМА\n", name);
+        printf("-> Итог %s: НОРМА\n", name);
     }
     
     return warn;
@@ -55,13 +69,15 @@ int main() {
     int b = analyze_comp("SSD");
     int c = analyze_comp("LOG");
 
-    printf("\n--- Проверка инцидента ---\n");
+    printf("\n========================================\n");
+    printf("--- ПРОВЕРКА ИНЦИДЕНТА ---\n");
     
     if ((a && b) || (a && c) || (b && c)) {
-        printf("Инцидент зафиксирован!\n");
+        printf("ВНИМАНИЕ: Инцидент зафиксирован!\n");
     } else {
         printf("Инцидентов не обнаружено. Все системы в норме.\n");
     }
+    printf("========================================\n");
 
     return 0;
 }
