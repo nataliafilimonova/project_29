@@ -1,3 +1,4 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <math.h>
 #include <locale.h>
@@ -23,11 +24,11 @@ int analyze_comp(char name[]) {
 
     printf("\n========================================\n");
     printf("Компонент: %s\n", name);
-    printf("Введите 5 значений (через пробел или Enter):\n");
+    printf("Введите 5 значений (через пробел, затем Enter):\n");
     
     for (int i = 0; i < 5; i++) {
         if (scanf("%f", &val) != 1) {
-            printf("Ошибка: введено не число!\n");
+            printf("Ошибка! Введите число.\n");
             while (getchar() != '\n'); 
             i--; 
             continue;
