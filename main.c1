@@ -1,0 +1,67 @@
+ #include <stdio.h>
+#include <math.h>
+#include <locale.h>
+
+float calc_q(float curr, float prev) {
+    if (prev == 0) return 0;
+    float diff = (curr - prev) / prev;
+    return diff * diff;
+}
+
+int check_rule(float q_curr, float q_prev) {
+    if (q_curr > 1.0 && q_prev > 1.0) {
+        return 1;
+    }
+    return 0;
+}
+
+int analyze_comp(char name[]) {
+    float val;
+    float x1 = 0, x2 = 0; 
+    float q_prev = 0;
+    int warn = 0;
+
+    printf("\nВведите 5 значений для %s (через пробел или Enter):\n", name);
+    
+    for (int i = 0; i < 5; i++) {
+        scanf("%f", &val);
+        
+        if (i >= 2) {
+            float q = calc_q(val, x1);
+            if (i >= 3) {
+                if (check_rule(q, q_prev)) {
+                    warn = 1;
+                }
+            }
+            q_prev = q;
+        }
+        x1 = x2;
+        x2 = val;
+    }
+    
+    if (warn == 1) {
+        printf("Состояние %s: ПРЕДУПРЕЖДЕНИЕ\n", name);
+    } else {
+        printf("Состояние %s: НОРМА\n", name);
+    }
+    
+    return warn;
+}
+
+int main() {
+    setlocale(LC_ALL, "Russian");
+
+    int a = analyze_comp("APP");
+    int b = analyze_comp("SSD");
+    int c = analyze_comp("LOG");
+
+    printf("\n--- Проверка инцидента ---\n");
+    
+    if ((a && b) || (a && c) || (b && c)) {
+        printf("Инцидент зафиксирован!\n");
+    } else {
+        printf("Инцидентов не обнаружено. Все системы в норме.\n");
+    }
+
+    return 0;
+}
